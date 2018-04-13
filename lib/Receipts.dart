@@ -9,7 +9,6 @@ class Reciept {
   
   Reciept(this.date, this.place, this.value);
 
-
   Map toJson(){
      return { 'date': date.toIso8601String(), 'place': place, 'value': value };
   }
@@ -25,7 +24,6 @@ class Receipts {
   }
 
   load() async {
-    print('loading');
     Directory directory = await path_provider.getApplicationDocumentsDirectory();
     _store = new File('${directory.path}/receipts.json');
 
@@ -50,12 +48,6 @@ class Receipts {
   }
   
   save (){
-    print('saving');
-/*
-    int i=0;
-
-    data['current'] = current[0];
-*/
     _store.writeAsStringSync(json.encode(this));
   }
 }

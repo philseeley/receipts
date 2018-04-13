@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
-import 'dart:io';
 import 'package:location/location.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'Receipts.dart';
+
+final TextStyle _biggerFont = const TextStyle(
+    color: Colors.black, fontSize: 16.0, fontWeight: FontWeight.bold);
+final TextStyle _biggestFont = const TextStyle(
+    color: Colors.black, fontSize: 24.0, fontWeight: FontWeight.bold);
 
 void main() => runApp(new ReceiptsApp());
 
@@ -33,8 +37,6 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
   StreamSubscription<Map<String, double>> _locationSubscription;
 
   final Set<String> _places = new Set<String>();
-  final TextStyle _biggerFont = const TextStyle(
-      color: Colors.black, fontSize: 16.0, fontWeight: FontWeight.bold);
   final TextEditingController _valueCtrl = new TextEditingController();
   final Location _location = new Location();
 
@@ -48,12 +50,6 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
     super.initState();
     _locationSubscription = _location.onLocationChanged.listen(getPlaces);
     WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  dispose (){
-    print('DISPASE');
-    super.dispose();
   }
 
   @override
@@ -72,14 +68,12 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
     }
     if(state == AppLifecycleState.paused){
     }
-    print('STATE:$state');
   }
 
   getPlaces(Map<String, double> location) async {
     dynamic data;
-//    print(location);
+
     if(location['accuracy'] <= 20/2) {
-      print('remove loc subscription');
       _locationSubscription.cancel();
     }
     try {
@@ -98,8 +92,6 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
     } catch (e) {
     }
 
-//    print('DATA:${data}');
-
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
@@ -107,7 +99,6 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
 
     if(data != null)
       setState(() {
-//      _places.clear();
         for (var r in data['results']) _places.add(r['name']);
 /*
       _places.add('test0');
@@ -130,20 +121,21 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
           },
         )
       ]),
-      body: _buildInput(),
+      body: _buildAddReceipt(),
     );
   }
 
-  Widget _buildInput() {
+  Widget _buildAddReceipt() {
     return new Column(children: <Widget>[
       new TextField(
         controller: _valueCtrl,
+        inputFormatters: <TextInputFormatter>[ new WhitelistingTextInputFormatter(new RegExp(r'^\d+.?\d?\d?'))],
         autofocus: true,
         keyboardType: TextInputType.number,
         textAlign: TextAlign.left,
-        style: _biggerFont,
+        style: _biggestFont,
         decoration: new InputDecoration(
-            labelText: '\$', contentPadding: new EdgeInsets.all(10.0)),
+            prefixIcon: new Icon(Icons.attach_money, color: Colors.black, size: 32.0)),
       ),
       new Expanded(child: new ListView.builder(
         itemBuilder: (context, i) {
@@ -167,16 +159,12 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
           double value = null;
           try{
             value = double.parse(_valueCtrl.text);
-
           } catch (e) {}
           if(value != null) {
-            _receipts.current.add(new Reciept(
+            _receipts.current.insert(0, new Reciept(
                 new DateTime.now(), place, value));
 
-//            _receipts.save();
             SystemNavigator.pop();
-//            exit(0);
-//            Navigator.pop(context);
           }
         });
       },
@@ -200,13 +188,6 @@ class ReceiptsState extends State<ReceiptsWidget> {
     _receipts = ReceiptsApp.receipts;
   }
 
-/*
-  @override
-  void initState() {
-    super.initState();
-  }
-
-*/
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -228,24 +209,37 @@ class ReceiptsState extends State<ReceiptsWidget> {
   Widget _buildReceiptRow(Reciept receipt) {
     var formatter = new DateFormat('yyyy-MM-dd HH:mm');
     String formatted = formatter.format(receipt.date.toLocal());
-    return new ListTile(
-      title: new Text(
-        '${formatted} ${receipt.place} ${receipt.value}',
-        style: _biggerFont,
-      ),
-      onTap: () {
-        setState(() {
-          _receipts.current.remove(receipt);
-          _receipts.checked.add(receipt);
-        });
-      },
+    return new Row(
+      children: <Widget>[new Expanded(child:
+    new ListTile(
+    title: new Text(
+    '${receipt.place}\n${formatted}',
+      style: _biggerFont,
+    ),
+    )),
+      new Expanded(child:
+      new ListTile(
+        title: new Text(
+          '${receipt.value}',
+          style: _biggestFont,
+          textAlign: TextAlign.right,
+        ),
+        onTap: () {
+          setState(() {
+            _receipts.current.remove(receipt);
+            _receipts.checked.insert(0, receipt);
+          });
+        },
+      ))
+
+      ]
     );
   }
 
   void _undo() {
     setState((){
       if(_receipts.checked.length > 0)
-        _receipts.current.insert(0, _receipts.checked.removeLast());
+        _receipts.current.insert(0, _receipts.checked.removeAt(0));
     });
   }
 }
