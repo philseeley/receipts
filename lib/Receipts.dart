@@ -2,12 +2,12 @@ import 'package:path_provider/path_provider.dart' as path_provider;
 import 'dart:io';
 import 'dart:convert';
 
-class Reciept {
+class Receipt {
   final DateTime date;
   final String place;
   final double value;
   
-  Reciept(this.date, this.place, this.value);
+  Receipt(this.date, this.place, this.value);
 
   Map toJson(){
      return { 'date': date.toIso8601String(), 'place': place, 'value': value };
@@ -15,8 +15,8 @@ class Reciept {
 }
 
 class Receipts {
-  final List<Reciept> current = new List<Reciept>();
-  final List<Reciept> checked = new List<Reciept>();
+  final List<Receipt> current = new List<Receipt>();
+  final List<Receipt> checked = new List<Receipt>();
   File _store;
 
   Map toJson(){
@@ -39,12 +39,12 @@ class Receipts {
     } on FileSystemException {}
   }
 
-  Reciept _parse(dynamic r){
+  Receipt _parse(dynamic r){
     DateTime d = DateTime.parse(r['date']);
     String l = r['place'];
     double v = r['value'];
 
-    return new Reciept(d, l, v);
+    return new Receipt(d, l, v);
   }
   
   save (){
