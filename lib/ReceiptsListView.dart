@@ -10,19 +10,21 @@ final TextStyle _biggestFont = const TextStyle(
 
 class ReceiptsListView extends StatefulWidget {
   final List<Receipt> _receipts;
-  final ValueChanged<Receipt> _onTap;
+  final Dis _onDismissed;
 
-  ReceiptsListView (this._receipts, this._onTap);
+  ReceiptsListView (this._receipts, this._onDismissed);
 
   @override
-  createState() => new ReceiptsListViewState(_receipts, _onTap);
+  createState() => new ReceiptsListViewState(_receipts, _onDismissed);
 }
+
+typedef void Dis(DismissDirection, Receipt);
 
 class ReceiptsListViewState extends State<ReceiptsListView> {
   final List<Receipt> _receipts;
-  final ValueChanged<Receipt> _onTap;
+  final Dis _onDismissed;
 
-  ReceiptsListViewState(this._receipts, this._onTap);
+  ReceiptsListViewState(this._receipts, this._onDismissed);
 
   @override
   Widget build(BuildContext context) {
@@ -37,30 +39,29 @@ class ReceiptsListViewState extends State<ReceiptsListView> {
   Widget _buildReceiptRow(Receipt receipt) {
     var formatter = new DateFormat('yyyy-MM-dd HH:mm');
     String formatted = formatter.format(receipt.date.toLocal());
-    return new Row(
-      children: <Widget>[new Expanded(child:
-    new ListTile(
-    title: new Text(
-    '${receipt.place}\n$formatted',
-      style: _biggerFont,
-    ),
-    )),
-      new Expanded(child:
-      new ListTile(
-        title: new Text(
-          '\$ ${receipt.value.toStringAsFixed(2)}',
-          style: _biggestFont,
-          textAlign: TextAlign.right,
-        ),
-        onTap: () {
-          setState(() {
-            if(_onTap != null)
-              _onTap(receipt);
-          });
-        },
-      ))
 
-      ]
+    return new Dismissible(
+      key: new GlobalKey(),
+      onDismissed: (direction){
+        _onDismissed(direction, receipt);
+        },
+      direction: DismissDirection.horizontal,
+      child: new Row(children: <Widget>[
+        new Expanded(child: new ListTile(
+          title: new Text(
+            '${receipt.place}\n$formatted',
+            style: _biggerFont,
+          ),
+        )),
+        new Expanded(child: new ListTile(
+          title: new Text(
+            '\$ ${receipt.value.toStringAsFixed(2)}',
+            style: _biggestFont,
+            textAlign: TextAlign.right,
+          ),
+        ))
+
+      ])
     );
   }
 }
