@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'Receipts.dart';
 
@@ -8,7 +7,7 @@ final TextStyle _biggerFont = const TextStyle(
 final TextStyle _biggestFont = const TextStyle(
     color: Colors.black, fontSize: 24.0, fontWeight: FontWeight.bold);
 
-typedef void DismissAction(DismissDirection, Receipt);
+typedef void DismissAction(DismissDirection direction, Receipt receipt);
 
 class ReceiptsListView extends StatefulWidget {
   final List<Receipt> _receipts;
