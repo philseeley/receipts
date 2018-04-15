@@ -134,7 +134,11 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
           decoration: new InputDecoration(
               prefixIcon: new Icon(Icons.attach_money, color: Colors.black, size: 32.0)),
         )),
-        new FlatButton(child: new Text('Add'),onPressed: (){ _addReceipt('');})]),
+        new IconButton(icon: new Icon(Icons.local_grocery_store), onPressed: (){ _addReceipt('Groceries');}),
+        new IconButton(icon: new Icon(Icons.local_gas_station), onPressed: (){ _addReceipt('Fuel');}),
+        new IconButton(icon: new Icon(Icons.restaurant), onPressed: (){ _addReceipt('Food/Drink');}),
+        new IconButton(icon: new Icon(Icons.local_offer), onPressed: (){ _addReceipt('Uncategorised');}),
+        ]),
       new Expanded(child: new ListView.builder(
         itemBuilder: (context, i) {
           if (i >= _places.length)
