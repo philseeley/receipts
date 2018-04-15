@@ -211,11 +211,9 @@ class CurrentReceiptsState extends State<CurrentReceiptsWidget> {
             }));}),
         ],
       ),
-      body: new ReceiptsListView(_receipts.current, (direction, receipt) {
-        setState(() {
-          _receipts.current.remove(receipt);
-          _receipts.checked.insert(0, receipt);
-        });}),
+      body: new ReceiptsListView(_receipts.current, Icons.delete, Icons.delete, (direction, receipt){
+        _delete(direction, receipt);
+        }),
     );
   }
 
@@ -223,6 +221,13 @@ class CurrentReceiptsState extends State<CurrentReceiptsWidget> {
     setState((){
       if(_receipts.checked.length > 0)
         _receipts.current.insert(0, _receipts.checked.removeAt(0));
+    });
+  }
+
+  void _delete(direction, receipt) {
+    setState(() {
+      _receipts.current.remove(receipt);
+      _receipts.checked.insert(0, receipt);
     });
   }
 }
@@ -249,7 +254,7 @@ class CheckedReceiptsState extends State<CheckedReceiptsWidget> {
           new IconButton(icon: new Icon(Icons.delete_forever), onPressed: _delete),
         ],
       ),
-      body: new ReceiptsListView(_receipts.checked, _restore),
+      body: new ReceiptsListView(_receipts.checked, Icons.undo, Icons.delete, _restore),
     );
   }
 

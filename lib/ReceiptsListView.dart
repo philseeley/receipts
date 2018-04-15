@@ -8,23 +8,27 @@ final TextStyle _biggerFont = const TextStyle(
 final TextStyle _biggestFont = const TextStyle(
     color: Colors.black, fontSize: 24.0, fontWeight: FontWeight.bold);
 
+typedef void DismissAction(DismissDirection, Receipt);
+
 class ReceiptsListView extends StatefulWidget {
   final List<Receipt> _receipts;
-  final Dis _onDismissed;
+  final IconData _swipeLeftIcon;
+  final IconData _swipeRightIcon;
+  final DismissAction _onDismissed;
 
-  ReceiptsListView (this._receipts, this._onDismissed);
+  ReceiptsListView (this._receipts, this._swipeLeftIcon, this._swipeRightIcon, this._onDismissed);
 
   @override
-  createState() => new ReceiptsListViewState(_receipts, _onDismissed);
+  createState() => new ReceiptsListViewState(_receipts, _swipeLeftIcon, _swipeRightIcon, this._onDismissed);
 }
-
-typedef void Dis(DismissDirection, Receipt);
 
 class ReceiptsListViewState extends State<ReceiptsListView> {
   final List<Receipt> _receipts;
-  final Dis _onDismissed;
+  final IconData _swipeLeftIcon;
+  final IconData _swipeRightIcon;
+  final DismissAction _onDismissed;
 
-  ReceiptsListViewState(this._receipts, this._onDismissed);
+  ReceiptsListViewState(this._receipts, this._swipeLeftIcon, this._swipeRightIcon, this._onDismissed);
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +46,8 @@ class ReceiptsListViewState extends State<ReceiptsListView> {
 
     return new Dismissible(
       key: new GlobalKey(),
+        secondaryBackground: new ListTile(trailing: new Icon(_swipeLeftIcon)),
+        background: new ListTile(leading: new Icon(_swipeRightIcon)),
       onDismissed: (direction){
         _onDismissed(direction, receipt);
         },
