@@ -33,7 +33,6 @@ class NewReceiptWidget extends StatefulWidget {
 }
 
 class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserver {
-  static const int _locationAccuracy = 30;
 
   Receipts _receipts;
   StreamSubscription<Map<String, double>> _locationSubscription;
@@ -76,14 +75,11 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
     try {
       dynamic data;
 
-//    if(location['accuracy'] <= _locationAccuracy/2)
-//      _locationSubscription.cancel();
-
       var uri = new Uri.https(
           'maps.googleapis.com', '/maps/api/place/nearbysearch/json', {
         'key': 'AIzaSyCErmNo5wVAFa68O49BoihbeQz_Jtyk8Zk',
         'location': "${location["latitude"]},${location["longitude"]}",
-        'radius': '$_locationAccuracy'
+        'radius': '${location["accuracy"]}'
       });
 
         http.Response response = await http.get(uri);
@@ -102,11 +98,6 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
           } catch (e) {
             print(e);
           }
-/*
-      _places.add('test0');
-      _places.add('test1');
-      _places.add('test2');
-*/
         });
     } catch (e) {
       print(e);
