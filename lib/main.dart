@@ -7,11 +7,6 @@ import 'package:flutter/services.dart';
 import 'Receipts.dart';
 import 'ReceiptsListView.dart';
 
-final TextStyle _biggerFont = const TextStyle(
-    color: Colors.black, fontSize: 16.0, fontWeight: FontWeight.bold);
-final TextStyle _biggestFont = const TextStyle(
-    color: Colors.black, fontSize: 24.0, fontWeight: FontWeight.bold);
-
 void main() => runApp(new ReceiptsApp());
 
 class ReceiptsApp extends StatelessWidget {
@@ -19,10 +14,9 @@ class ReceiptsApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return new MaterialApp(
       title: 'Receipts',
-      home: new NewReceiptWidget(),
+      home: new NewReceiptWidget()
     );
   }
 }
@@ -130,9 +124,9 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
           autofocus: true,
           keyboardType: TextInputType.number,
           textAlign: TextAlign.left,
-          style: _biggestFont,
+          style: Theme.of(context).textTheme.headline.apply(fontWeightDelta: 4),
           decoration: new InputDecoration(
-              prefixIcon: new Icon(Icons.attach_money, color: Colors.black, size: 32.0)),
+              prefixIcon: new Icon(Icons.attach_money, color: Colors.black, size: Theme.of(context).textTheme.headline.fontSize)),
         )),
         new IconButton(icon: new Icon(Icons.local_grocery_store), onPressed: (){ _addReceipt('Groceries');}),
         new IconButton(icon: new Icon(Icons.local_gas_station), onPressed: (){ _addReceipt('Fuel');}),
@@ -154,7 +148,7 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
     return new ListTile(
       title: new Text(
         place,
-        style: _biggerFont,
+        style: Theme.of(context).textTheme.subhead.apply(fontWeightDelta: 4),
       ),
       onTap: () {
         _addReceipt(place);

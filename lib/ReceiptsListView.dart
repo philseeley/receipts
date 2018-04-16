@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'Receipts.dart';
 
-final TextStyle _biggerFont = const TextStyle(
-    color: Colors.black, fontSize: 16.0, fontWeight: FontWeight.bold);
-final TextStyle _biggestFont = const TextStyle(
-    color: Colors.black, fontSize: 24.0, fontWeight: FontWeight.bold);
-
 typedef void DismissAction(DismissDirection direction, Receipt receipt);
 
 class ReceiptsListView extends StatefulWidget {
@@ -55,13 +50,13 @@ class ReceiptsListViewState extends State<ReceiptsListView> {
         new Expanded(child: new ListTile(
           title: new Text(
             '${receipt.place}\n$formatted',
-            style: _biggerFont,
+            style: Theme.of(context).textTheme.subhead.apply(fontWeightDelta: 4),
           ),
         )),
         new Expanded(child: new ListTile(
           title: new Text(
             '\$ ${receipt.value.toStringAsFixed(2)}',
-            style: _biggestFont,
+            style: Theme.of(context).textTheme.headline.apply(fontWeightDelta: 4),
             textAlign: TextAlign.right,
           ),
         ))
