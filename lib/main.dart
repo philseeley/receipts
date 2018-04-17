@@ -61,8 +61,6 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
         _locationSubscription = _location.onLocationChanged.listen(getPlaces);
         break;
     }
-    if(state == AppLifecycleState.paused){
-    }
   }
 
   getPlaces(Map<String, double> location) async {
@@ -94,6 +92,7 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
           }
         });
     } catch (e) {
+      //TODO something useful to debug
       print(e);
     }
   }
@@ -117,7 +116,7 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
 
   Widget _buildAddReceipt() {
     return new Column(children: <Widget>[
-        new Row(children: <Widget>[
+      new Row(children: <Widget>[
         new Expanded(child: new TextField(
           controller: _valueCtrl,
           inputFormatters: <TextInputFormatter>[ new WhitelistingTextInputFormatter(new RegExp(r'^\d+.?\d?\d?'))],
@@ -126,19 +125,19 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
           textAlign: TextAlign.left,
           style: Theme.of(context).textTheme.headline.apply(fontWeightDelta: 4),
           decoration: new InputDecoration(
-              prefixIcon: new Icon(Icons.attach_money, color: Colors.black, size: Theme.of(context).textTheme.headline.fontSize)),
+            prefixIcon: new Icon(Icons.attach_money, color: Colors.black, size: Theme.of(context).textTheme.headline.fontSize)),
         )),
         new IconButton(icon: new Icon(Icons.local_grocery_store), onPressed: (){ _addReceipt('Groceries');}),
         new IconButton(icon: new Icon(Icons.local_gas_station), onPressed: (){ _addReceipt('Fuel');}),
         new IconButton(icon: new Icon(Icons.restaurant), onPressed: (){ _addReceipt('Food/Drink');}),
         new IconButton(icon: new Icon(Icons.local_offer), onPressed: (){ _addReceipt('Uncategorised');}),
-        ]),
+      ]),
       new Expanded(child: new ListView.builder(
         itemBuilder: (context, i) {
-          if (i >= _places.length)
-            return null;
-          else
+          if (i < _places.length)
             return _buildPlaceRow(_places.elementAt(i));
+
+          return null;
         },
       )),
     ]);
@@ -198,11 +197,11 @@ class CurrentReceiptsState extends State<CurrentReceiptsWidget> {
             Navigator.push(context, new MaterialPageRoute(builder: (context) {
               return new CheckedReceiptsWidget();
             }));}),
-        ],
+        ]
       ),
       body: new ReceiptsListView(_receipts.current, Icons.delete, Icons.delete, (direction, receipt){
         _delete(direction, receipt);
-        }),
+      }),
     );
   }
 
@@ -241,8 +240,7 @@ class CheckedReceiptsState extends State<CheckedReceiptsWidget> {
         title: new Text('Checked Receipts'),
         actions: <Widget>[
           new IconButton(icon: new Icon(Icons.delete_forever), onPressed: _delete),
-        ],
-      ),
+      ]),
       body: new ReceiptsListView(_receipts.checked, Icons.undo, Icons.delete, _restore),
     );
   }
@@ -256,30 +254,30 @@ class CheckedReceiptsState extends State<CheckedReceiptsWidget> {
     });
   }
 
-  Future<Null> _delete() {
+  _delete() async {
     return showDialog<Null>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return new AlertDialog(
           title: new Text('Permanently delete all checked receipts?'),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text('No'),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              new FlatButton(
-                child: new Text('Yes'),
-                onPressed: () {
-                  setState(() {
-                    _receipts.checked.clear();
-                  });
-                  Navigator.pop(context);
-                },
-              ),
-          ],
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text('No'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            new FlatButton(
+              child: new Text('Yes'),
+              onPressed: () {
+                setState(() {
+                  _receipts.checked.clear();
+                });
+                Navigator.pop(context);
+              },
+            ),
+          ]
         );
       },
     );

@@ -10,7 +10,7 @@ class Receipt {
   Receipt(this.date, this.place, this.value);
 
   Map toJson(){
-     return { 'date': date.toIso8601String(), 'place': place, 'value': value };
+    return { 'date': date.toIso8601String(), 'place': place, 'value': value };
   }
 }
 

@@ -27,10 +27,10 @@ class ReceiptsListViewState extends State<ReceiptsListView> {
   @override
   Widget build(BuildContext context) {
     return new ListView.builder(itemBuilder: (BuildContext context, int i) {
-        if (i >= _receipts.length)
-          return null;
-        else
+        if (i < _receipts.length)
           return _buildReceiptRow(_receipts[i]);
+
+        return null;
       });
     }
 
@@ -40,11 +40,11 @@ class ReceiptsListViewState extends State<ReceiptsListView> {
 
     return new Dismissible(
       key: new GlobalKey(),
-        secondaryBackground: new ListTile(trailing: new Icon(_swipeLeftIcon)),
-        background: new ListTile(leading: new Icon(_swipeRightIcon)),
+      secondaryBackground: new ListTile(trailing: new Icon(_swipeLeftIcon)),
+      background: new ListTile(leading: new Icon(_swipeRightIcon)),
       onDismissed: (direction){
         _onDismissed(direction, receipt);
-        },
+      },
       direction: DismissDirection.horizontal,
       child: new Row(children: <Widget>[
         new Expanded(child: new ListTile(
@@ -60,7 +60,6 @@ class ReceiptsListViewState extends State<ReceiptsListView> {
             textAlign: TextAlign.right,
           ),
         ))
-
       ])
     );
   }
