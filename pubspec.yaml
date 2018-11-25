@@ -8,6 +8,7 @@ dependencies:
   location:
   intl:
   path_provider:
+  http:
 
 dev_dependencies:
   flutter_test:

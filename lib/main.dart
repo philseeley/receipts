@@ -43,7 +43,7 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
   @override
   void initState() {
     super.initState();
-    _locationSubscription = _location.onLocationChanged.listen(getPlaces);
+    _locationSubscription = _location.onLocationChanged().listen(getPlaces);
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -58,7 +58,7 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
         _locationSubscription.cancel();
         break;
       case AppLifecycleState.resumed:
-        _locationSubscription = _location.onLocationChanged.listen(getPlaces);
+        _locationSubscription = _location.onLocationChanged().listen(getPlaces);
         break;
     }
   }
