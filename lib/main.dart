@@ -29,7 +29,7 @@ class NewReceiptWidget extends StatefulWidget {
 class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserver {
 
   Receipts _receipts;
-  StreamSubscription<Map<String, double>> _locationSubscription;
+  StreamSubscription<LocationData> _locationSubscription;
 
   final Set<String> _places = new Set<String>();
   final TextEditingController _valueCtrl = new TextEditingController();
@@ -43,7 +43,7 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
   @override
   void initState() {
     super.initState();
-    _locationSubscription = _location.onLocationChanged().listen(getPlaces);
+    _locationSubscription = _location.onLocationChanged.listen(getPlaces);
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -53,25 +53,25 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
     {
       case AppLifecycleState.paused:
       case AppLifecycleState.inactive:
-      case AppLifecycleState.suspending:
+      case AppLifecycleState.detached:
         _receipts.save();
         _locationSubscription.cancel();
         break;
       case AppLifecycleState.resumed:
-        _locationSubscription = _location.onLocationChanged().listen(getPlaces);
+        _locationSubscription = _location.onLocationChanged.listen(getPlaces);
         break;
     }
   }
 
-  getPlaces(Map<String, double> location) async {
+  getPlaces(LocationData location) async {
     try {
       dynamic data;
 
       var uri = new Uri.https(
           'maps.googleapis.com', '/maps/api/place/nearbysearch/json', {
         'key': 'AIzaSyCErmNo5wVAFa68O49BoihbeQz_Jtyk8Zk',
-        'location': "${location["latitude"]},${location["longitude"]}",
-        'radius': '${location["accuracy"]}'
+        'location': "${location.latitude},${location.longitude}",
+        'radius': '${location.accuracy}'
       });
 
         http.Response response = await http.get(uri);
