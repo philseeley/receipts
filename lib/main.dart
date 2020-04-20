@@ -28,6 +28,7 @@ class NewReceiptWidget extends StatefulWidget {
 
 class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserver {
 
+  String _apikey;
   Receipts _receipts;
   StreamSubscription<LocationData> _locationSubscription;
 
@@ -65,22 +66,25 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
 
   getPlaces(LocationData location) async {
     try {
-      dynamic data;
-
-      var uri = new Uri.https(
-          'maps.googleapis.com', '/maps/api/place/nearbysearch/json', {
-        'key': 'AIzaSyCErmNo5wVAFa68O49BoihbeQz_Jtyk8Zk',
-        'location': "${location.latitude},${location.longitude}",
-        'radius': '${location.accuracy}'
-      });
-
-        http.Response response = await http.get(uri);
-        data = json.decode(response.body);
-
       // If the widget was removed from the tree while the asynchronous platform
       // message was in flight, we want to discard the reply rather than calling
       // setState to update our non-existent appearance.
       if (!mounted) return;
+
+      if (_apikey == null)
+        _apikey = json.decode(await DefaultAssetBundle.of(context).loadString('secret.json'))['apikey'];
+
+      dynamic data;
+
+      var uri = new Uri.https(
+        'maps.googleapis.com', '/maps/api/place/nearbysearch/json', {
+        'key': _apikey,
+        'location': "${location.latitude},${location.longitude}",
+        'rankby': 'distance'
+      });
+
+      http.Response response = await http.get(uri);
+      data = json.decode(response.body);
 
       if (data != null)
         setState(() {
