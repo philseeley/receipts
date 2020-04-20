@@ -124,7 +124,6 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
         new Expanded(child: new TextField(
           controller: _valueCtrl,
           inputFormatters: <TextInputFormatter>[new WhitelistingTextInputFormatter(new RegExp(r'^\d+\.?\d?\d?'))],
-          autofocus: true,
           keyboardType: TextInputType.number,
           textAlign: TextAlign.left,
           style: Theme.of(context).textTheme.headline.apply(fontWeightDelta: 4),
