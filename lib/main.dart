@@ -91,13 +91,13 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
           try {
             for (var r in data['results'])
               _places.add(r['name']);
-          } catch (e) {
-            print(e);
-          }
+          } catch (e) {}
         });
     } catch (e) {
-      //TODO something useful to debug
-      print(e);
+      setState(() {
+        _places.add(e);
+      });
+
     }
   }
 
