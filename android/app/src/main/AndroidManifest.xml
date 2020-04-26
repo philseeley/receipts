@@ -11,7 +11,8 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="Receipts"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="true">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
