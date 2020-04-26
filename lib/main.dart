@@ -15,6 +15,7 @@ class ReceiptsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Receipts',
       home: new NewReceiptWidget()
     );
