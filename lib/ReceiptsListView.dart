@@ -50,13 +50,13 @@ class ReceiptsListViewState extends State<ReceiptsListView> {
         new Expanded(child: new ListTile(
           title: new Text(
             '${receipt.place}\n$formatted',
-            style: Theme.of(context).textTheme.subhead.apply(fontWeightDelta: 4),
+            style: Theme.of(context).textTheme.subtitle1.apply(fontWeightDelta: 4),
           ),
         )),
         new Expanded(child: new ListTile(
           title: new Text(
             '\$ ${receipt.value.toStringAsFixed(2)}',
-            style: Theme.of(context).textTheme.headline.apply(fontWeightDelta: 4),
+            style: Theme.of(context).textTheme.headline5.apply(fontWeightDelta: 4),
             textAlign: TextAlign.right,
           ),
         ))

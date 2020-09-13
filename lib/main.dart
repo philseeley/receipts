@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
+
 import 'package:location/location.dart';
 import 'package:flutter/services.dart';
+import 'package:share/share.dart';
+import 'package:intl/intl.dart';
+
 import 'Receipts.dart';
 import 'ReceiptsListView.dart';
 
@@ -124,12 +128,12 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
       new Row(children: <Widget>[
         new Expanded(child: new TextField(
           controller: _valueCtrl,
-          inputFormatters: <TextInputFormatter>[new WhitelistingTextInputFormatter(new RegExp(r'^\d+\.?\d?\d?'))],
+          inputFormatters: <TextInputFormatter>[new FilteringTextInputFormatter.allow(new RegExp(r'^\d+\.?\d?\d?'))],
           keyboardType: TextInputType.number,
           textAlign: TextAlign.left,
-          style: Theme.of(context).textTheme.headline.apply(fontWeightDelta: 4),
+          style: Theme.of(context).textTheme.headline5.apply(fontWeightDelta: 4),
           decoration: new InputDecoration(
-            prefixIcon: new Icon(Icons.attach_money, color: Colors.black, size: Theme.of(context).textTheme.headline.fontSize)),
+            prefixIcon: new Icon(Icons.attach_money, color: Colors.black, size: Theme.of(context).textTheme.headline5.fontSize)),
         )),
         new IconButton(icon: new Icon(Icons.local_grocery_store), onPressed: (){ _addReceipt('Groceries');}),
         new IconButton(icon: new Icon(Icons.local_gas_station), onPressed: (){ _addReceipt('Fuel');}),
@@ -151,7 +155,7 @@ class NewReceiptState extends State<NewReceiptWidget> with WidgetsBindingObserve
     return new ListTile(
       title: new Text(
         place,
-        style: Theme.of(context).textTheme.subhead.apply(fontWeightDelta: 4),
+        style: Theme.of(context).textTheme.subtitle1.apply(fontWeightDelta: 4),
       ),
       onTap: () {
         _addReceipt(place);
@@ -197,6 +201,7 @@ class CurrentReceiptsState extends State<CurrentReceiptsWidget> {
         title: new Text('Receipts'),
         actions: <Widget>[
           new IconButton(icon: new Icon(Icons.undo), onPressed: _undo),
+          new IconButton(icon: new Icon(Icons.share), onPressed: _share),
           new IconButton(icon: new Icon(Icons.list), onPressed: () {
             Navigator.push(context, new MaterialPageRoute(builder: (context) {
               return new CheckedReceiptsWidget();
@@ -214,6 +219,17 @@ class CurrentReceiptsState extends State<CurrentReceiptsWidget> {
       if(_receipts.checked.length > 0)
         _receipts.current.insert(0, _receipts.checked.removeAt(0));
     });
+  }
+
+  void _share() async {
+    DateFormat formatter = new DateFormat('yyyy-MM-dd');
+
+    String data = "";
+    for(Receipt r in _receipts.current) {
+      String date = formatter.format(r.date.toLocal());
+      data += "$date,${r.value},${r.place.replaceAll(',', ' ')}\n";
+    }
+    Share.share(data);
   }
 
   void _delete(direction, receipt) {
