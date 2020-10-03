@@ -200,12 +200,15 @@ class CurrentReceiptsState extends State<CurrentReceiptsWidget> {
       appBar: new AppBar(
         title: new Text('Receipts'),
         actions: <Widget>[
+          new IconButton(icon: new Icon(Icons.playlist_add_check), onPressed: () { askDelete(this, context, 'Mark all receipts as checked?', _checkAll);}),
           new IconButton(icon: new Icon(Icons.undo), onPressed: _undo),
           new IconButton(icon: new Icon(Icons.share), onPressed: _share),
-          new IconButton(icon: new Icon(Icons.list), onPressed: () {
-            Navigator.push(context, new MaterialPageRoute(builder: (context) {
+          new IconButton(icon: new Icon(Icons.list), onPressed: () async {
+            await Navigator.push(context, new MaterialPageRoute(builder: (context) {
               return new CheckedReceiptsWidget();
-            }));}),
+            }));
+            setState(() {});
+          }),
         ]
       ),
       body: new ReceiptsListView(_receipts.current, Icons.delete, Icons.delete, (direction, receipt){
@@ -238,6 +241,13 @@ class CurrentReceiptsState extends State<CurrentReceiptsWidget> {
       _receipts.checked.insert(0, receipt);
     });
   }
+
+  void _checkAll() {
+    setState(() {
+        _receipts.checked.addAll(_receipts.current);
+        _receipts.current.clear();
+    });
+  }
 }
 
 class CheckedReceiptsWidget extends StatefulWidget {
@@ -259,7 +269,7 @@ class CheckedReceiptsState extends State<CheckedReceiptsWidget> {
       appBar: new AppBar(
         title: new Text('Checked Receipts'),
         actions: <Widget>[
-          new IconButton(icon: new Icon(Icons.delete_forever), onPressed: _delete),
+            new IconButton(icon: new Icon(Icons.delete_forever), onPressed: () { askDelete(this, context, 'Permanently delete all checked receipts?', _deleteAll);}),
       ]),
       body: new ReceiptsListView(_receipts.checked, Icons.undo, Icons.delete, _restore),
     );
@@ -270,36 +280,41 @@ class CheckedReceiptsState extends State<CheckedReceiptsWidget> {
       _receipts.checked.remove(receipt);
 
       if(direction == DismissDirection.endToStart)
-      _receipts.current.insert(0, receipt);
+        _receipts.current.insert(0, receipt);
     });
   }
 
-  _delete() async {
-    return showDialog<Null>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return new AlertDialog(
-          title: new Text('Permanently delete all checked receipts?'),
-          actions: <Widget>[
-            new FlatButton(
-              child: new Text('No'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            new FlatButton(
-              child: new Text('Yes'),
-              onPressed: () {
-                setState(() {
-                  _receipts.checked.clear();
-                });
-                Navigator.pop(context);
-              },
-            ),
-          ]
-        );
-      },
-    );
+  void _deleteAll() {
+    setState(() {
+      _receipts.checked.clear();
+    });
   }
 }
+
+void askDelete(State state, BuildContext context, String prompt, VoidCallback deleteCB) async {
+  return showDialog<Null>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return new AlertDialog(
+        title: new Text(prompt),
+        actions: <Widget>[
+          new FlatButton(
+            child: new Text('No'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          new FlatButton(
+            child: new Text('Yes'),
+            onPressed: () {
+              deleteCB();
+              Navigator.pop(context);
+            },
+          ),
+        ]
+      );
+    },
+  );
+}
+
